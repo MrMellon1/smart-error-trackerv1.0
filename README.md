@@ -2,7 +2,7 @@
 
 SmartTrack, modern web uygulamalarında (Browser ve Node.js ortamlarında) meydana gelen kritik hataları, istisnaları (uncaught exceptions) ve çözümlenmemiş asenkron reddedilmeleri (unhandled rejections) merkezi bir sunucuda toplayan, anlamlandıran ve **Google Gemini AI** entegrasyonu ile otomatik olarak analiz eden tam teşekküllü bir **kurumsal yazılım ekosistemidir**.
 
-Bu proje; kendi özel SDK yapılarına sahip olması, ilişkisel veritabanı optimizasyonları barındırması, siber güvenlik standartlarına (Rate Limiting, CORS ve Environment İzolasyonu) uygun olarak tasarlanması ve şık bir Vanilla JS Dashboard sunması nedeniyledüzeyde bir portföy çalışmasıdır.
+Bu proje; Temel seviyede kendi özel SDK yapılarına sahip olması, ilişkisel veritabanı optimizasyonları barındırması, siber güvenlik standartlarına (Rate Limiting, CORS ve Environment İzolasyonu) uygun olarak tasarlanması ve şık bir Vanilla JS Dashboard sunması nedeniyle geliştirme aşamasında olan bir portföy çalışmasıdır.
 
 ---
 

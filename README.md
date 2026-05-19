@@ -1,5 +1,5 @@
 
-# Bu Proje Geliştirilme Aşamasında Olup Kullanıma Hazır Değildir.
+# Bu proje, örnek bir ekosistem olarak aktif olarak geliştirilmektedir. Katkılarınız ve geri bildirimleriniz memnuniyetle karşılanacaktır!
 
 
 
@@ -51,6 +51,6 @@ SmartTrack, birbirinden bağımsız çalışan ama tam uyumla haberleşen 4 ana 
 
 ### 2. Projeyi Klonlama ve Paket Kurulumu (deploy etmeden önce bu URL'i değiştirin)
 ```bash
-git clone [https://github.com/MrMellon1/smart-error-trackerv1.git](https://github.com/MrMellon1/smart-error-trackerv1.git)
-cd smart-error-tracker/backend
+git clone [https://github.com/MrMellon1/smart-error-trackerv1.0.git](https://github.com/MrMellon1/smart-error-trackerv1.0.git)
+cd smart-error-trackerv1/backend
 npm install

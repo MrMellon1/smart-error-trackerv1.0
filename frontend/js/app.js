@@ -37,18 +37,35 @@ async function loadProjects() {
         projects.forEach(p => {
             const a = document.createElement('a');
             a.href = "#";
-            a.className = "flex items-center px-3 py-2 text-gray-400 hover:text-white hover:bg-darkborder/50 rounded-xl text-sm font-medium transition cursor-pointer group";
-            a.innerHTML = `<i class="fas fa-layer-group mr-3 text-gray-500 group-hover:text-blue-400 transition"></i> <span class="truncate">${p.name}</span>`;
+            // KURSAL DOKUNUŞ: flex-1 ve justify-between ekleyerek çöp kutusunu sağa yasladık
+            a.className = "flex items-center justify-between px-3 py-2 text-gray-400 hover:text-white hover:bg-darkborder/50 rounded-xl text-sm font-medium transition cursor-pointer group w-full";
+            
+            // Proje ID'sini elemente data attribute olarak gömüyoruz
+            a.setAttribute('data-id', p.id);
+
+            a.innerHTML = `
+                <div class="flex items-center truncate">
+                    <i class="fas fa-layer-group mr-3 text-gray-500 group-hover:text-blue-400 transition"></i> 
+                    <span class="truncate">${p.name}</span>
+                </div>
+                <button onclick="deleteProjectEventHandler(event, ${p.id}, '${p.name}')" class="opacity-0 group-hover:opacity-100 p-1 text-gray-500 hover:text-red-400 transition" title="Projeyi Sil">
+                    <i class="far fa-trash-alt text-xs"></i>
+                </button>
+            `;
+            
             a.onclick = (e) => {
+                // Eğer çöp kutusuna tıklandıysa projeyi seçme, dur
+                if (e.target.closest('button')) return;
+                
                 e.preventDefault();
                 document.querySelectorAll('#project-list a').forEach(el => {
                     el.classList.remove('bg-darkborder/50', 'text-white');
                     el.classList.add('text-gray-400');
-                    el.querySelector('i').classList.replace('text-blue-400', 'text-gray-500');
+                    if (el.querySelector('i')) el.querySelector('i').classList.replace('text-blue-400', 'text-gray-500');
                 });
                 a.classList.add('bg-darkborder/50', 'text-white');
                 a.classList.remove('text-gray-400');
-                a.querySelector('i').classList.replace('text-gray-500', 'text-blue-400');
+                if (a.querySelector('i')) a.querySelector('i').classList.replace('text-gray-500', 'text-blue-400');
                 selectProject(p.name, p.api_key || p.apiKey);
             };
             list.appendChild(a);
@@ -381,3 +398,179 @@ function formatMarkdown(text) {
         .replace(/`(.*?)`/g, '<code class="bg-darkborder text-blue-400 px-1.5 py-0.5 rounded font-mono text-[11px]">$1</code>')
         .replace(/\n/g, '<br>');
 }
+
+// ========================================================
+// 🎭 MODAL YÖNETİMİ: ÇİRKİN PROMPT YERİNE ÖZEL DARK MODAL
+// ========================================================
+
+// 1. Modalı Açma
+function openProjectModal() {
+    const overlay = document.getElementById('project-modal-overlay');
+    const modal = document.getElementById('project-modal');
+    const input = document.getElementById('project-modal-input');
+    
+    input.value = ''; // İçini temizle
+    overlay.classList.remove('hidden');
+    
+    setTimeout(() => {
+        overlay.classList.remove('opacity-0');
+        modal.classList.remove('opacity-0', 'scale-95');
+        modal.classList.add('opacity-100', 'scale-100');
+        input.focus(); // Doğrudan inputa odaklansın
+    }, 10);
+}
+
+// 2. Modalı Kapatma
+function closeProjectModal() {
+    const overlay = document.getElementById('project-modal-overlay');
+    const modal = document.getElementById('project-modal');
+    
+    overlay.classList.add('opacity-0');
+    modal.classList.remove('opacity-100', 'scale-100');
+    modal.classList.add('opacity-0', 'scale-95');
+    
+    setTimeout(() => {
+        overlay.classList.add('hidden');
+    }, 300);
+}
+
+// ==========================================
+// 🛠️ MODERN PROJE SİLME İŞLEMLERİ
+// ==========================================
+let projectToDelete = null; // Silinecek projeyi geçici olarak hafızada tutarız
+
+function deleteProjectEventHandler(event, projectId, projectName) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    projectToDelete = { id: projectId, name: projectName }; // Hafızaya al
+    
+    // Çirkin 'confirm' yerine bizim özel modalı tasarlayıp açıyoruz
+    document.getElementById('confirm-modal-desc').innerHTML = `<strong class="text-white">${projectName}</strong> projesini ve içerisindeki TÜM hata loglarını kalıcı olarak silmek istediğinize emin misiniz?`;
+    
+    const overlay = document.getElementById('confirm-modal-overlay');
+    const modal = document.getElementById('confirm-modal');
+    overlay.classList.remove('hidden');
+    setTimeout(() => {
+        overlay.classList.remove('opacity-0');
+        modal.classList.remove('opacity-0', 'scale-95');
+        modal.classList.add('opacity-100', 'scale-100');
+    }, 10);
+}
+
+function closeConfirmModal() {
+    const overlay = document.getElementById('confirm-modal-overlay');
+    const modal = document.getElementById('confirm-modal');
+    overlay.classList.add('opacity-0');
+    modal.classList.remove('opacity-100', 'scale-100');
+    modal.classList.add('opacity-0', 'scale-95');
+    setTimeout(() => overlay.classList.add('hidden'), 300);
+    projectToDelete = null;
+}
+
+// "Evet, Sil" butonuna basıldığında tetiklenir
+async function executeDeleteProject() {
+    if (!projectToDelete) return;
+    const { id: projectId, name: projectName } = projectToDelete;
+    
+    closeConfirmModal(); // Modalı kapat
+
+    try {
+        const data = await api.deleteProject(projectId);
+        if (data.error) {
+            showToast(data.error, 'error');
+        } else {
+            showToast('Proje başarıyla silindi.', 'success');
+            const activeProject = document.getElementById('active-project-name').innerText;
+            if (activeProject === projectName) {
+                document.getElementById('active-project-name').innerText = "Proje Seçilmedi";
+                document.getElementById('issues-list').innerHTML = '';
+                localStorage.removeItem('currentApiKey');
+                if(typeof updateStats === 'function') updateStats([]); 
+            }
+            loadProjects(); 
+        }
+    } catch (error) {
+        showToast('Sunucuyla bağlantı kurulamadı.', 'error');
+    }
+}
+
+// ==========================================
+// 🚀 MODERN PROJE EKLEME & API KEY GÖSTERİMİ
+// ==========================================
+async function submitNewProject(event) {
+    event.preventDefault(); 
+    
+    const input = document.getElementById('project-modal-input');
+    const projectName = input.value.trim();
+    if (!projectName) return;
+
+    try {
+        const data = await api.createProject(projectName);
+
+        if (data.error) {
+            showToast(data.error, 'error');
+        } else {
+            closeProjectModal(); // Ekleme formunu kapat
+            showToast('Proje başarıyla oluşturuldu.', 'success');
+            
+            // Çirkin 'alert' yerine bizim yeşil başarı modalını aç!
+            const apiKeyToDisplay = data.apiKey || data.api_key || data.project?.api_key;
+            document.getElementById('apikey-modal-title').innerText = `"${projectName}" Başarıyla Açıldı!`;
+            document.getElementById('apikey-modal-input').value = apiKeyToDisplay;
+            
+            const overlay = document.getElementById('apikey-modal-overlay');
+            const modal = document.getElementById('apikey-modal');
+            overlay.classList.remove('hidden');
+            setTimeout(() => {
+                overlay.classList.remove('opacity-0');
+                modal.classList.remove('opacity-0', 'scale-95');
+                modal.classList.add('opacity-100', 'scale-100');
+            }, 10);
+            
+            loadProjects(); 
+        }
+    } catch (error) {
+        showToast('Sunucuyla bağlantı kurulamadı.', 'error');
+    }
+}
+
+function closeApiKeyModal() {
+    const overlay = document.getElementById('apikey-modal-overlay');
+    const modal = document.getElementById('apikey-modal');
+    overlay.classList.add('opacity-0');
+    modal.classList.remove('opacity-100', 'scale-100');
+    modal.classList.add('opacity-0', 'scale-95');
+    setTimeout(() => overlay.classList.add('hidden'), 300);
+}
+
+function copyNewApiKey() {
+    const input = document.getElementById('apikey-modal-input');
+    input.select();
+    input.setSelectionRange(0, 99999);
+    navigator.clipboard.writeText(input.value).then(() => {
+        showToast('API Key panoya kopyalandı!', 'success');
+    });
+}
+
+// ==========================================
+// 🔌 BUTONLARI VE FORMLARI CANLANDIRMA
+// ==========================================
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. Artı (+) Butonuna Tıklanınca Ekleme Modalını Aç
+    const addProjectBtn = document.querySelector('.add-project-btn') || document.querySelector('.fa-plus')?.parentElement;
+    if (addProjectBtn) {
+        addProjectBtn.style.cursor = 'pointer';
+        addProjectBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            // openProjectModal fonksiyonu bir önceki adımdan zaten dosyamızda duruyor
+            if(typeof openProjectModal === 'function') openProjectModal(); 
+        });
+    }
+
+    // 2. Modalın İçindeki Form "Oluştur"a Basılınca Çalışsın
+    const projectForm = document.getElementById('project-modal-form');
+    if (projectForm) {
+        projectForm.addEventListener('submit', submitNewProject);
+    }
+});

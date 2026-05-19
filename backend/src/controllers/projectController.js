@@ -1,6 +1,7 @@
 const crypto = require('crypto');
 const pool   = require('../config/db');
 
+// 1. Proje Oluşturma
 async function createProject(req, res, next) {
   try {
     const { name } = req.body;
@@ -18,9 +19,9 @@ async function createProject(req, res, next) {
   }
 }
 
+// 2. Projeleri Listeleme (Sol Menü İçin)
 async function listProjects(req, res, next) {
   try {
-    // Sadece id ve name değil, api_key'i de çekiyoruz
     const [rows] = await pool.query('SELECT id, name, api_key, created_at FROM projects ORDER BY created_at DESC');
     res.json(rows);
   } catch (err) {
@@ -28,4 +29,23 @@ async function listProjects(req, res, next) {
   }
 }
 
-module.exports = { createProject, listProjects };
+// 3. Proje Silme (Yeni Eklenen Fonksiyon)
+async function deleteProject(req, res, next) {
+  try {
+    const { id } = req.params;
+    
+    // Veritabanında ON DELETE CASCADE olduğu için hatalar otomatik silinecektir
+    const [result] = await pool.query('DELETE FROM projects WHERE id = ?', [id]);
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: 'Proje bulunamadı.' });
+    }
+
+    res.json({ message: 'Proje ve bağlı tüm hatalar başarıyla silindi.' });
+  } catch (err) {
+    next(err); // Hata olursa senin global hata yakalayıcına gönderiyoruz
+  }
+}
+
+// Hepsini dışarıya aktarıyoruz
+module.exports = { createProject, listProjects, deleteProject };

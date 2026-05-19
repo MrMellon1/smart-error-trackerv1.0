@@ -22,6 +22,24 @@ const api = {
         });
         return res.json();
     },
+    
+    createProject: async (name) => {
+        const res = await fetch(`${API_BASE_URL}/projects`, {
+            method: 'POST',
+            headers: api.getAdminHeaders(),
+            body: JSON.stringify({ name })
+        });
+        return res.json();
+    },
+
+    // 🎯 YENİ EKLENEN SİLME FONKSİYONU
+    deleteProject: async (id) => {
+        const res = await fetch(`${API_BASE_URL}/projects/${id}`, {
+            method: 'DELETE',
+            headers: api.getAdminHeaders() // Senin doğru şifreleme fonksiyonun!
+        });
+        return res.json();
+    },
 
     // PROJE (API KEY) YETKİSİ GEREKTİREN İŞLEMLER
     getProjectHeaders: () => ({

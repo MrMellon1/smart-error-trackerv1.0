@@ -51,6 +51,6 @@ SmartTrack, birbirinden bağımsız çalışan ama tam uyumla haberleşen 4 ana 
 
 ### 2. Projeyi Klonlama ve Paket Kurulumu (deploy etmeden önce bu URL'i değiştirin)
 ```bash
-git clone [https://github.com/MrMellon1/smart-error-trackerv1.0.git](https://github.com/MrMellon1/smart-error-trackerv1.0.git)
+git clone [https://github.com/Lecrain0/smart-error-trackerv1.0.git](https://github.com/Lecrain0/smart-error-trackerv1.0.git)
 cd smart-error-trackerv1/backend
 npm install

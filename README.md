@@ -1,6 +1,8 @@
 
 # Bu Proje Geliştirilme Aşamasında Olup Kullanıma Hazır Değildir.
 
+
+
 # ⚡ SmartTrack: Yapay Zeka Destekli Gerçek Zamanlı Hata Takip Ekosistemi (Enterprise Error Tracker)
 
 SmartTrack, modern web uygulamalarında (Browser ve Node.js ortamlarında) meydana gelen kritik hataları, istisnaları (uncaught exceptions) ve çözümlenmemiş asenkron reddedilmeleri (unhandled rejections) merkezi bir sunucuda toplayan, anlamlandıran ve **Google Gemini AI** entegrasyonu ile otomatik olarak analiz eden tam teşekküllü bir **kurumsal yazılım ekosistemidir**.
@@ -49,6 +51,6 @@ SmartTrack, birbirinden bağımsız çalışan ama tam uyumla haberleşen 4 ana 
 
 ### 2. Projeyi Klonlama ve Paket Kurulumu (deploy etmeden önce bu URL'i değiştirin)
 ```bash
-git clone [https://github.com/seyithamitcakar/smart-error-tracker.git](https://github.com/seyithamitcakar/smart-error-tracker.git)
+git clone [https://github.com/MrMellon1/smart-error-trackerv1.git](https://github.com/MrMellon1/smart-error-trackerv1.git)
 cd smart-error-tracker/backend
 npm install

@@ -20,23 +20,12 @@ SmartTrack, birbirinden bağımsız çalışan ama tam uyumla haberleşen 4 ana 
 ## 🚀 Öne Çıkan Gelişmiş Özellikler
 
 ### 1. Akıllı Parmak İzi (Fingerprint) ve "isNew" Optimizasyonu
-Aynı hata (örneğin bir veritabanı kopması veya tanımsız değişken çağrısı) binlerce kez tetiklenebilir. SmartTrack, gelen her hatayı doğrudan kaydetmek yerine hata mesajı ve lokasyonundan dinamik bir **parmak izi (fingerprint)** üretir.
-* Hata sisteme **ilk kez** düşüyorsa veritabanında yeni bir grup oluşturulur ve **Gemini AI anında tetiklenerek** analiz hazırlanır.
-* Hata daha önce oluşmuşsa, yapay zekaya tekrar istek atıp kotayı tüketmemek için sadece hata tetiklenme sayacı (`occurrence_count`) artırılır ve son görülme tarihi güncellenir.
 
 ### 2. Siber Güvenlik ve Defansif Mimari
-* **DDoS ve Flood Koruması (Rate Limiting):** `express-rate-limit` entegrasyonu sayesinde, bir uygulamanın döngüye girip (infinite loop) backend'e saniyede binlerce hata göndererek sistemi kilitlemesi engellenir. Hata loglama endpoint'i IP başına sınırlandırılmıştır.
-* **Güvenlik Duvarı & CORS:** API kapıları varsayılan olarak korumalıdır. Production aşamasında sadece yetkilendirilmiş domainlerin (whitelist) sisteme veri basmasına izin verecek altyapıya sahiptir.
-* **Environment İzolasyonu:** Tüm kritik şifreler, veritabanı kimlik bilgileri, JWT secret anahtarları ve Google AI Studio API anahtarı kodun içinden tamamen arındırılmış, `.env` dosyasında izole edilmiştir.
 
 ### 3. İlişkisel Veritabanı ve Performans İndeksleri
-Veritabanı şeması (`schema.sql`), yüksek veri trafiği altında bile tıkanmayacak şekilde tasarlanmıştır:
-* `projects`, `issues` ve `errors` tabloları arasında `FOREIGN KEY` ilişkileri kurulmuştur.
-* `ON DELETE CASCADE` kurgusu sayesinde bir proje silindiğinde ona ait milyonlarca hata logu veritabanında çöp bırakmayacak şekilde otomatik olarak temizlenir.
-* **B-Tree İndeksleme:** Sık aranan alanlar (`project_id`, `fingerprint`, `issue_id`) üzerinde özel indeksler (`CREATE INDEX`) tanımlanarak panelin listeleme ve arama hızı mikro saniyeler seviyesine indirilmiştir.
 
 ### 4. Şık Markdown Parser ve Esnek Arayüz
-Yapay zekanın ürettiği teknik yanıtlar (Markdown formatındaki başlıklar, kalın yazılar, satır içi kod blokları) frontend tarafında özel bir regex parser fonksiyonu yardımıyla dinamik olarak şık HTML bileşenlerine dönüştürülür. Taşma (overflow) sorunları esnek flex yapısı ve modern scroll barları ile çözülmüştür.
 
 ---
 

@@ -1,9 +1,6 @@
-
-# Bu proje, örnek bir ekosistem olarak aktif olarak geliştirilmektedir. Katkılarınız ve geri bildirimleriniz memnuniyetle karşılanacaktır!
-
-
-
 # ⚡ SmartTrack: Yapay Zeka Destekli Gerçek Zamanlı Hata Takip Ekosistemi (Enterprise Error Tracker)
+
+> 🚀 Bu proje, örnek bir ekosistem olarak aktif olarak geliştirilmektedir. Katkılarınız ve geri bildirimleriniz memnuniyetle karşılanacaktır!
 
 SmartTrack, modern web uygulamalarında (Browser ve Node.js ortamlarında) meydana gelen kritik hataları, istisnaları (uncaught exceptions) ve çözümlenmemiş asenkron reddedilmeleri (unhandled rejections) merkezi bir sunucuda toplayan, anlamlandıran ve **Google Gemini AI** entegrasyonu ile otomatik olarak analiz eden tam teşekküllü bir **kurumsal yazılım ekosistemidir**.
 
